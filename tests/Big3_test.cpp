@@ -5,25 +5,34 @@
 #include <Big3.hpp>
 
 // helpers
-string vectorToString(const vector<string> v);
-
+template <typename T>
+void AssertVectorsEqual(vector<T> want, vector<T> got);
+template <typename T>
+string vectorToString(const vector<T> v);
 // tests
 BOOST_AUTO_TEST_CASE(constructors_test)
 {
     vector<string> want({"MyClass"});
     Big3 b3("testcases/Class.hpp");
-    b3.FindClassDeclarations();
-    
-    BOOST_REQUIRE_MESSAGE(want == b3.fnTable, "failed with table dump, want " << vectorToString(want) << " got " << b3.DumpFnTable());
+    b3.FindClassConstructor();
+
+    AssertVectorsEqual<string>(want, b3.fnTable);
 }
 
-// BOOST_AUTO_TEST_CASE(destructors_test)
-// {
-//     // find constructor of a class that does exist
+BOOST_AUTO_TEST_CASE(destructors_test)
+{
+    // find destructor of a class that does exist
+    vector<string> want({});
+    Big3 b3("testcases/ClassNoBig3.hpp");
+    b3.FindClassDestructor();
 
-//     // check class has no derived types
-//     // check class has derived types and therefore the destructor should be virtual
-// }
+    AssertVectorsEqual<string>(want, b3.fnTable);
+
+    // check no destructor exists for this test case
+
+    // check class has no derived types
+    // check class has derived types and therefore the destructor should be virtual
+}
 
 // BOOST_AUTO_TEST_CASE(copyconstructor_test)
 // {
@@ -35,7 +44,13 @@ BOOST_AUTO_TEST_CASE(constructors_test)
 //     //  find copy constructor exists
 // }
 
-string vectorToString(const vector<string> v)
+template <typename T>
+void AssertVectorsEqual(vector<T> want, vector<T> got)
+{
+    BOOST_REQUIRE_MESSAGE(want == got, "failed with table dump, want " << vectorToString<T>(want) << " got " << vectorToString<T>(got));
+}
+template <typename T>
+string vectorToString(const vector<T> v)
 {
     std::string s;
     for (const auto &piece : v)
