@@ -7,7 +7,7 @@ main:
 	clang++ -lclang $(INC) main.cpp -o main
 test:
 	echo ${CUR}
-	clang++ -lclang -lboost_unit_test_framework $(INC) tests/ut_big3.cpp -o test
+	clang++ -lclang -lboost_unit_test_framework $(INC) tests/Big3_test.cpp -o test
 clean:
 	@rm -f main test
 install:

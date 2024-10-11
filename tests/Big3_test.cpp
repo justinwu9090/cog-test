@@ -3,7 +3,7 @@
 #include <boost/test/unit_test.hpp>
 
 
-#include <big3.hpp>
+#include <Big3.hpp>
 
 BOOST_AUTO_TEST_CASE(constructors_test)
 {
