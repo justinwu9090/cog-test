@@ -22,13 +22,28 @@ BOOST_AUTO_TEST_CASE(constructors_test)
 BOOST_AUTO_TEST_CASE(destructors_test)
 {
     // find destructor of a class that does exist
-    vector<string> want({});
-    Big3 b3("testcases/ClassNoBig3.hpp");
-    b3.FindClassDestructor();
+    []
+    {
+        vector<string> want({"~MyClass"});
+        Big3 b3("testcases/Class.hpp");
+        b3.FindClassDestructor();
 
-    AssertVectorsEqual<string>(want, b3.fnTable);
+        AssertVectorsEqual<string>(want, b3.fnTable);
+    }();
 
     // check no destructor exists for this test case
+    []
+    {
+        vector<string> want({});
+        Big3 b3("testcases/ClassNoBig3.hpp");
+        b3.FindClassDestructor();
+
+        AssertVectorsEqual<string>(want, b3.fnTable);
+    }();
+    // vector<string>
+    //     want({});
+    // Big3 b3("testcases/ClassNoBig3.hpp");
+    // b3.FindClassDestructor();
 
     // check class has no derived types
     // check class has derived types and therefore the destructor should be virtual
