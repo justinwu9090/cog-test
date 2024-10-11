@@ -3,6 +3,8 @@
 class MyClass
 {
 public:
+  MyClass();
+  ~MyClass();
   int field;
   virtual void method() const = 0;
 
