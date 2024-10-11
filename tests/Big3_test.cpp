@@ -40,11 +40,6 @@ BOOST_AUTO_TEST_CASE(destructors_test)
 
         AssertVectorsEqual<string>(want, b3.fnTable);
     }();
-    // vector<string>
-    //     want({});
-    // Big3 b3("testcases/ClassNoBig3.hpp");
-    // b3.FindClassDestructor();
-
     // check class has no derived types
     // check class has derived types and therefore the destructor should be virtual
 }
