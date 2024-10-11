@@ -10,6 +10,3 @@ void DoSomething(); //generated
 void DoAnotherThing(); //generated
 void DoLastThing(); //generated
 //[[[end]]]
-
-
-asdfasdf
