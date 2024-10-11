@@ -8,10 +8,12 @@ class Big3
 private:
     CXIndex index;
     CXTranslationUnit unit;
+
 public:
     vector<std::string> fnTable;
     Big3(const char *file);
     ~Big3();
-    void FindClassDeclarations();
+    void FindClassConstructor();
+    void FindClassDestructor();
     string DumpFnTable();
 };
