@@ -4,10 +4,62 @@
 #include <string>
 using namespace std;
 
+#include <Big3.hpp>
+
+static vector<std::string> globalFnTable;
+
+ostream &operator<<(ostream &stream, const CXString &str);
+string clangStr(const CXCursor c);
+CXChildVisitResult IsClassDeclaration(CXCursor c, CXCursor parent, CXClientData client_data);
+
+// ======================================================
+// Classes
+// ======================================================
+
+Big3::Big3(const char *file)
+{
+  index = clang_createIndex(0, 0);
+  unit = clang_parseTranslationUnit(
+      index,
+      file, nullptr, 0,
+      nullptr, 0,
+      CXTranslationUnit_None);
+  if (unit == nullptr)
+  {
+    cerr << "Unable to parse translation unit. Quitting." << endl;
+    exit(-1);
+  }
+}
+
+Big3::~Big3()
+{
+  clang_disposeTranslationUnit(unit);
+  clang_disposeIndex(index);
+}
+
+void Big3::FindClassDeclarations()
+{
+  CXCursor cursor = clang_getTranslationUnitCursor(unit);
+  int array[10];
+  clang_visitChildren(
+      cursor,
+      &IsClassDeclaration,
+      static_cast<void *>(&fnTable));
+}
+
+string Big3::DumpFnTable()
+{
+  string ret;
+  for (auto x : fnTable)
+  {
+    ret.append(" " + x);
+  }
+  return ret;
+}
+
 // ======================================================
 // Helpers
 // ======================================================
-
 ostream &operator<<(ostream &stream, const CXString &str)
 {
   stream << clang_getCString(str);
@@ -23,49 +75,16 @@ string clangStr(const CXCursor c)
   return s;
 }
 
-static vector<std::string> fnTable;
-
 CXChildVisitResult IsClassDeclaration(CXCursor c, CXCursor parent, CXClientData client_data)
 {
   if ((clang_getCursorKind(c) == CXCursor_Constructor) || (clang_getCursorKind(c) == CXCursor_Destructor))
   {
-    // if (clang_CXXConstructor_isCopyConstructor(c))
+    std::vector<string> &fnTable = *static_cast<std::vector<string>*>(client_data);
+    // name of class constructor / destructor
+    // std::cout << "Cursor '" << clang_getCursorSpelling(c) << "' of kind '"
+    //           << clang_getCursorKindSpelling(clang_getCursorKind(c)) << "'\n";
     fnTable.push_back(clangStr(c));
   }
 
-  // std::cout << "Cursor '" << clang_getCursorSpelling(c) << "' of kind '"
-  //           << clang_getCursorKindSpelling(clang_getCursorKind(c)) << "'\n";
   return CXChildVisit_Recurse;
-}
-
-// ======================================================
-// Main
-// ======================================================
-
-int main()
-{
-  CXIndex index = clang_createIndex(0, 0);
-  CXTranslationUnit unit = clang_parseTranslationUnit(
-      index,
-      "header.hpp", nullptr, 0,
-      nullptr, 0,
-      CXTranslationUnit_None);
-  if (unit == nullptr)
-  {
-    cerr << "Unable to parse translation unit. Quitting." << endl;
-    exit(-1);
-  }
-
-  CXCursor cursor = clang_getTranslationUnitCursor(unit);
-  clang_visitChildren(
-      cursor,
-      &IsClassDeclaration,
-      nullptr);
-
-  for (auto x : fnTable)
-  {
-    cout << x << endl;
-  }
-  clang_disposeTranslationUnit(unit);
-  clang_disposeIndex(index);
 }
