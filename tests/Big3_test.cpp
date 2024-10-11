@@ -10,11 +10,11 @@ string vectorToString(const vector<string> v);
 // tests
 BOOST_AUTO_TEST_CASE(constructors_test)
 {
-    vector<string> want({"MyClass", "~MyClass"});
+    vector<string> want({"MyClass"});
     Big3 b3("testcases/Class.hpp");
     b3.FindClassDeclarations();
     
-    BOOST_REQUIRE_MESSAGE(want != b3.fnTable, "failed with table dump, want " << vectorToString(want) << " got " << b3.DumpFnTable());
+    BOOST_REQUIRE_MESSAGE(want == b3.fnTable, "failed with table dump, want " << vectorToString(want) << " got " << b3.DumpFnTable());
 }
 
 // BOOST_AUTO_TEST_CASE(destructors_test)

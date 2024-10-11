@@ -10,7 +10,7 @@ static vector<std::string> globalFnTable;
 
 ostream &operator<<(ostream &stream, const CXString &str);
 string clangStr(const CXCursor c);
-CXChildVisitResult IsClassDeclaration(CXCursor c, CXCursor parent, CXClientData client_data);
+CXChildVisitResult IsClassConstructor(CXCursor c, CXCursor parent, CXClientData client_data);
 
 // ======================================================
 // Classes
@@ -43,7 +43,7 @@ void Big3::FindClassDeclarations()
   int array[10];
   clang_visitChildren(
       cursor,
-      &IsClassDeclaration,
+      &IsClassConstructor,
       static_cast<void *>(&fnTable));
 }
 
@@ -75,14 +75,11 @@ string clangStr(const CXCursor c)
   return s;
 }
 
-CXChildVisitResult IsClassDeclaration(CXCursor c, CXCursor parent, CXClientData client_data)
+CXChildVisitResult IsClassConstructor(CXCursor c, CXCursor parent, CXClientData client_data)
 {
-  if ((clang_getCursorKind(c) == CXCursor_Constructor) || (clang_getCursorKind(c) == CXCursor_Destructor))
+  if ((clang_getCursorKind(c) == CXCursor_Constructor))
   {
     std::vector<string> &fnTable = *static_cast<std::vector<string>*>(client_data);
-    // name of class constructor / destructor
-    // std::cout << "Cursor '" << clang_getCursorSpelling(c) << "' of kind '"
-    //           << clang_getCursorKindSpelling(clang_getCursorKind(c)) << "'\n";
     fnTable.push_back(clangStr(c));
   }
 
