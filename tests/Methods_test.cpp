@@ -2,7 +2,7 @@
 #define BOOST_TEST_MODULE xxx
 #include <boost/test/unit_test.hpp>
 
-#include <Big3.hpp>
+#include <Methods.hpp>
 
 // helpers
 template <typename T>
@@ -20,8 +20,8 @@ BOOST_AUTO_TEST_CASE(method_test)
         Function("MyClass","void", "method", {{"int", "x"}, {"float", "y"}}),
         Function("MyClass","int", "static_method", {}),
     });
-    Big3 b3("testcases/Class.hpp");
-    vector<Function> got = b3.GetFunctions();
+    Methods m("testcases/Class.hpp");
+    vector<Function> got = m.GetFunctions();
 
     volatile int i = 0;
     BOOST_REQUIRE_MESSAGE(want.size() == got.size(), "Error want/got size not matching");
@@ -35,10 +35,10 @@ BOOST_AUTO_TEST_CASE(method_test)
 BOOST_AUTO_TEST_CASE(constructors_test)
 {
     vector<string> want({"MyClass"});
-    Big3 b3("testcases/Class.hpp");
-    b3.FindClassConstructor();
+    Methods m("testcases/Class.hpp");
+    m.FindClassConstructor();
 
-    AssertVectorsEqual<string>(want, b3.fnTable);
+    AssertVectorsEqual<string>(want, m.fnTable);
 }
 
 BOOST_AUTO_TEST_CASE(destructors_test)
@@ -47,20 +47,20 @@ BOOST_AUTO_TEST_CASE(destructors_test)
     []
     {
         vector<string> want({"~MyClass"});
-        Big3 b3("testcases/Class.hpp");
-        b3.FindClassDestructor();
+        Methods m("testcases/Class.hpp");
+        m.FindClassDestructor();
 
-        AssertVectorsEqual<string>(want, b3.fnTable);
+        AssertVectorsEqual<string>(want, m.fnTable);
     }();
 
     // check no destructor exists for this test case
     []
     {
         vector<string> want({});
-        Big3 b3("testcases/ClassNoBig3.hpp");
-        b3.FindClassDestructor();
+        Methods m("testcases/ClassNoBig3.hpp");
+        m.FindClassDestructor();
 
-        AssertVectorsEqual<string>(want, b3.fnTable);
+        AssertVectorsEqual<string>(want, m.fnTable);
     }();
     // check class has no derived types
     // check class has derived types and therefore the destructor should be virtual

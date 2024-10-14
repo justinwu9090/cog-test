@@ -1,11 +1,19 @@
 #include <iostream>
 using namespace std;
 
-#include <Big3.hpp>
+#include <Methods.hpp>
 
-int main()
+int main(int argc, char* argv[])
 {
-    Big3 b3("testcases/Class.hpp");
+    if (argc != 2) 
+    {
+        cout << "incorrect # arguments passed. need 1 argument for header file name";
+        return 1;
+    }
+    
+    cout << "// parsed from: " << argv[1] << endl;
+    
+    Methods b3(argv[1]);
 
     vector<Function> fns = b3.GetFunctions();
 

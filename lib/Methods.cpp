@@ -4,7 +4,7 @@
 #include <string>
 using namespace std;
 
-#include <Big3.hpp>
+#include <Methods.hpp>
 
 static vector<std::string> globalFnTable;
 
@@ -18,7 +18,7 @@ CXChildVisitResult IsMethod(CXCursor c, CXCursor parent, CXClientData client_dat
 // Classes
 // ======================================================
 
-Big3::Big3(const char *file)
+Methods::Methods(const char *file)
 {
   index = clang_createIndex(0, 0);
   unit = clang_parseTranslationUnit(
@@ -33,13 +33,13 @@ Big3::Big3(const char *file)
   }
 }
 
-Big3::~Big3()
+Methods::~Methods()
 {
   clang_disposeTranslationUnit(unit);
   clang_disposeIndex(index);
 }
 
-void Big3::FindClassConstructor()
+void Methods::FindClassConstructor()
 {
   CXCursor cursor = clang_getTranslationUnitCursor(unit);
   clang_visitChildren(
@@ -47,7 +47,7 @@ void Big3::FindClassConstructor()
       &GetClassConstructor,
       static_cast<void *>(&fnTable));
 }
-void Big3::FindClassDestructor()
+void Methods::FindClassDestructor()
 {
   CXCursor cursor = clang_getTranslationUnitCursor(unit);
   clang_visitChildren(
@@ -56,7 +56,7 @@ void Big3::FindClassDestructor()
       static_cast<void *>(&fnTable));
 }
 
-vector<Function> Big3::GetFunctions()
+vector<Function> Methods::GetFunctions()
 {
   vector<Function> fnlist;
   CXCursor cursor = clang_getTranslationUnitCursor(unit);
@@ -67,7 +67,7 @@ vector<Function> Big3::GetFunctions()
   return fnlist;
 }
 
-string Big3::DumpFnTable()
+string Methods::DumpFnTable()
 {
   string ret;
   for (auto x : fnTable)

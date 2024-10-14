@@ -20,7 +20,7 @@ struct Function
     }
 };
 
-class Big3
+class Methods
 {
 private:
     CXIndex index;
@@ -28,8 +28,8 @@ private:
 
 public:
     vector<std::string> fnTable;
-    Big3(const char *file);
-    ~Big3();
+    Methods(const char *file);
+    ~Methods();
     void FindClassConstructor();
     void FindClassDestructor();
     vector<Function> GetFunctions();
