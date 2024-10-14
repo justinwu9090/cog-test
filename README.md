@@ -1,4 +1,4 @@
-# CPP Code Generation
+# libclang-autocomplete
 
 This is a project utilizing libclang to auto-generate class functions that need to be implemented. The main purpose of this project was for me to get familiarized with libclang's library, and thus some better APIs and tools were not evaluated.
 
@@ -45,6 +45,10 @@ You can even have multiple classes in one header file and their respective metho
 My project is quite simple for learning purposes and will not do:
 - Find out const/virtual/volatile qualifiers etc., would need a workaround possibly thorugh `clang_getCursorPrettyPrinted()` to get the full line
 - nested classes are not yet tested, but may be supported
+
+## Next Steps
+- Facilitate: hook up to an editor plugin to allow autocomplete as a macro!
+- Expand: detect Big 3 / Big 5 class definitions and suggest creating them)
 
 # Other tools for evaluation
 There are simpler methods of achieving similar results, of which I have not yet evaluated, including:
