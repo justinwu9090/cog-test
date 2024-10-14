@@ -9,9 +9,10 @@ using namespace std;
 static vector<std::string> globalFnTable;
 
 ostream &operator<<(ostream &stream, const CXString &str);
-string clangStr(const CXCursor c);
+string CXCursorToString(const CXCursor c);
 CXChildVisitResult GetClassConstructor(CXCursor c, CXCursor parent, CXClientData client_data);
 CXChildVisitResult GetClassDestructor(CXCursor c, CXCursor parent, CXClientData client_data);
+CXChildVisitResult IsMethod(CXCursor c, CXCursor parent, CXClientData client_data);
 
 // ======================================================
 // Classes
@@ -55,6 +56,17 @@ void Big3::FindClassDestructor()
       static_cast<void *>(&fnTable));
 }
 
+vector<Function> Big3::GetFunctions()
+{
+  vector<Function> fnlist;
+  CXCursor cursor = clang_getTranslationUnitCursor(unit);
+  clang_visitChildren(
+      cursor,
+      &IsMethod,
+      static_cast<void *>(&fnlist));
+  return fnlist;
+}
+
 string Big3::DumpFnTable()
 {
   string ret;
@@ -75,11 +87,17 @@ ostream &operator<<(ostream &stream, const CXString &str)
   return stream;
 }
 
-string clangStr(const CXCursor c)
+string CXStringtoString(CXString str)
 {
-  CXString str = clang_getCursorSpelling(c);
   string s = clang_getCString(str);
   clang_disposeString(str);
+  return s;
+}
+
+string CXCursorToString(const CXCursor c)
+{
+  CXString str = clang_getCursorSpelling(c);
+  string s = CXStringtoString(str);
   return s;
 }
 
@@ -87,8 +105,8 @@ CXChildVisitResult GetClassConstructor(CXCursor c, CXCursor parent, CXClientData
 {
   if ((clang_getCursorKind(c) == CXCursor_Constructor))
   {
-    std::vector<string> &fnTable = *static_cast<std::vector<string>*>(client_data);
-    fnTable.push_back(clangStr(c));
+    std::vector<string> &fnTable = *static_cast<std::vector<string> *>(client_data);
+    fnTable.push_back(CXCursorToString(c));
   }
 
   return CXChildVisit_Recurse;
@@ -98,9 +116,36 @@ CXChildVisitResult GetClassDestructor(CXCursor c, CXCursor parent, CXClientData 
 {
   if ((clang_getCursorKind(c) == CXCursor_Destructor))
   {
-    std::vector<string> &fnTable = *static_cast<std::vector<string>*>(client_data);
-    fnTable.push_back(clangStr(c));
+    std::vector<string> &fnTable = *static_cast<std::vector<string> *>(client_data);
+    fnTable.push_back(CXCursorToString(c));
   }
 
+  return CXChildVisit_Recurse;
+}
+
+CXChildVisitResult IsMethod(CXCursor c, CXCursor parent, CXClientData client_data)
+{
+  std::vector<Function> &ClassFunctions = *static_cast<std::vector<Function> *>(client_data);
+  if ((clang_getCursorKind(c) == CXCursor_Constructor) || (clang_getCursorKind(c) == CXCursor_Destructor) || (clang_getCursorKind(c) == CXCursor_CXXMethod))
+  {
+    // result type
+    string result_type = CXStringtoString(clang_getTypeSpelling(clang_getResultType(clang_getCursorType(c))));
+
+    // can parse out non-variadic arguments
+    int n = clang_Cursor_getNumArguments(c);
+    vector<pair<string, string>> parameters;
+    for (int i = 0; i < n; i++)
+    {
+      CXCursor argument = clang_Cursor_getArgument(c, i);
+      CXType argument_type = clang_getCursorType(argument);
+      string name = CXStringtoString(clang_getCursorSpelling(argument));
+      string type = CXStringtoString(clang_getTypeSpelling(argument_type));
+      // cout << clang_getTypeSpelling(argument_type) << " " << name << endl;
+      parameters.push_back(make_pair(type, name));
+    }
+
+    Function fn(result_type, CXCursorToString(c), parameters);
+    ClassFunctions.push_back(fn);
+  }
   return CXChildVisit_Recurse;
 }
