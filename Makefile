@@ -5,7 +5,7 @@ MORE=-D_GLIBCXX_DEBUG
 all: main
 	@echo done
 main:
-	clang++ -lclang $(INC) main.cpp -o main $(MORE)
+	clang++ $(MORE) -lclang $(INC) lib/Big3.cpp main.cpp -o main 
 test:
 	clang++ $(MORE) -lclang -g -lboost_unit_test_framework $(INC) lib/Big3.cpp tests/Big3_test.cpp -o test
 clean:
