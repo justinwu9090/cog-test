@@ -15,10 +15,10 @@ void assertFunctionsEqual(Function want, Function got);
 BOOST_AUTO_TEST_CASE(method_test)
 {
     vector<Function> want({
-        Function("void", "MyClass", {}),
-        Function("void", "~MyClass", {}),
-        Function("void", "method", {{"int", "x"}, {"float", "y"}}),
-        Function("int", "static_method", {}),
+        Function("MyClass","void", "MyClass", {}),
+        Function("MyClass","void", "~MyClass", {}),
+        Function("MyClass","void", "method", {{"int", "x"}, {"float", "y"}}),
+        Function("MyClass","int", "static_method", {}),
     });
     Big3 b3("testcases/Class.hpp");
     vector<Function> got = b3.GetFunctions();

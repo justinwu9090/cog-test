@@ -6,8 +6,8 @@ public:
   MyClass();
   ~MyClass();
   int field;
-  virtual void method(int x, float y) const = 0;
+  void method(int x, float y);
 
   static const int static_field;
-  static int static_method();
+  int static_method();
 };

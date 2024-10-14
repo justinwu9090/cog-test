@@ -143,8 +143,9 @@ CXChildVisitResult IsMethod(CXCursor c, CXCursor parent, CXClientData client_dat
       // cout << clang_getTypeSpelling(argument_type) << " " << name << endl;
       parameters.push_back(make_pair(type, name));
     }
+    string parent = CXCursorToString(clang_getCursorSemanticParent(c));
 
-    Function fn(result_type, CXCursorToString(c), parameters);
+    Function fn(parent, result_type, CXCursorToString(c), parameters);
     ClassFunctions.push_back(fn);
   }
   return CXChildVisit_Recurse;
